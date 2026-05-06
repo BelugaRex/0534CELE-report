@@ -1,4 +1,5 @@
 # ELEC4350 Final Group Project — Report
+
 *课程大作业报告*
 
 > **Group 5**
@@ -10,6 +11,7 @@
 ---
 
 ## Project Overview
+
 *项目简介*
 
 **Topic**:
@@ -45,6 +47,7 @@ IEEEtran (`\documentclass[journal]{IEEEtran}`)
 ---
 
 ## File Structure
+
 *文件结构*
 
 ```
@@ -73,13 +76,17 @@ report/
 ---
 
 ## How to Compile
+
 *编译方法*
 
 1. Install the VS Code extension **LaTeX Workshop**.
+
     *安装 VS Code 扩展 **LaTeX Workshop**。*
 2. Open `main.tex` and compile with LaTeX Workshop (Recipe: `latexmk` or `pdflatex → bibtex → pdflatex ×2`).
+
     *打开 `main.tex`，使用 LaTeX Workshop 编译（Recipe: `latexmk` 或 `pdflatex → bibtex → pdflatex ×2`）。*
 3. The compiled files will be written to `build/` automatically, and the main PDF is also copied to the repository root for convenience.
+
     *编译产物会自动输出到 `build/` 目录，主 PDF 也会额外复制到仓库根目录方便预览。*
 
 ```bash
@@ -90,15 +97,20 @@ latexmk -pdf -outdir=build main.tex
 ---
 
 ## Course Requirements
+
 *课程要求*
 
 - Focus on AI-computing-related research from the past **3–5 years**.
+
     *研究范围聚焦近 **3~5 年** AI 计算相关研究。*
 - Extend beyond lecture content to emerging technologies, algorithms, and design methodologies rather than repeating class discussion.
+
     *在课堂内容基础上扩展到新兴技术、算法和设计方法学，而非重复课堂讨论。*
 - Extract cross-paper design insights instead of simply listing papers by category.
+
     *提炼跨论文的设计洞察（insights），而非简单罗列分类论文。*
 - A high-quality survey paper may be publishable directly with advisor approval.
+
     *高质量综述论文有望在导师批准下直接发表。*
 
 ---
