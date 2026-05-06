@@ -1,0 +1,5 @@
+build/
+main.pdf
+.AGENT.md
+.DS_Store
+.idea/

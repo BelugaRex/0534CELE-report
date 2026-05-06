@@ -1,0 +1,88 @@
+{
+    // LaTeX Workshop settings — aux files to build/, PDF copied to root
+    "latex-workshop.latex.outDir": "%DIR%",
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk (build to build/, PDF to root)",
+            "tools": [
+                "latexmk",
+                "copy_pdf_to_root"
+            ]
+        },
+        {
+            "name": "pdflatex \u2192 bibtex \u2192 pdflatex\u00d72",
+            "tools": [
+                "pdflatex",
+                "bibtex",
+                "pdflatex",
+                "pdflatex",
+                "copy_pdf_to_root"
+            ]
+        }
+    ],
+    "latex-workshop.latex.tools": [
+        {
+            "name": "latexmk",
+            "command": "latexmk",
+            "args": [
+                "-pdf",
+                "-outdir=build",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "pdflatex",
+            "command": "pdflatex",
+            "args": [
+                "-output-directory=build",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "bibtex",
+            "command": "bibtex",
+            "args": [
+                "build/%DOCFILE%"
+            ]
+        },
+        {
+            "name": "copy_pdf_to_root",
+            "command": "powershell",
+            "args": [
+                "-Command",
+                "Copy-Item -Force \"build/%DOCFILE%.pdf\" \"%DIR%\\\""
+            ]
+        }
+    ],
+    "latex-workshop.latex.clean.fileTypes": [
+        "*.aux",
+        "*.bbl",
+        "*.blg",
+        "*.idx",
+        "*.ind",
+        "*.lof",
+        "*.lot",
+        "*.out",
+        "*.toc",
+        "*.acn",
+        "*.acr",
+        "*.alg",
+        "*.glg",
+        "*.glo",
+        "*.gls",
+        "*.fls",
+        "*.fdb_latexmk",
+        "*.snm",
+        "*.nav",
+        "*.thm",
+        "*.vrb",
+        "*.synctex.gz"
+    ],
+    "latex-workshop.latex.autoClean.run": "onBuilt",
+    "latex-workshop.latex.autoBuild.run": "onFileChange",
+    "latex-workshop.view.pdf.viewer": "tab",
+    "[latex]": {
+        "editor.formatOnSave": false,
+        "editor.wordWrap": "off"
+    }
+}
