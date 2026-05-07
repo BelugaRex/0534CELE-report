@@ -60,10 +60,20 @@ report/
 │                          # VS Code 配置
 ├── README.md               # Project overview
 │                          # 项目说明（本文件）
-├── main.tex                # Main LaTeX file
-│                          # LaTeX 主文件
+├── main.tex                # Main LaTeX file (preamble + \input sections)
+│                          # LaTeX 主文件（导言区 + \input 引入各章节）
 ├── references.bib          # References
 │                          # 参考文献
+├── sections/               # Section files
+│                          # 各章节文件
+│   ├── introduction.tex
+│   ├── fundamentals.tex
+│   ├── ai-optimizations.tex
+│   ├── chiplets.tex
+│   ├── security.tex
+│   ├── photonic.tex
+│   ├── crosscut.tex
+│   └── conclusion.tex
 ├── image/                  # Figures and assets
 │                          # 图片资源
 │   ├── fig_path_multicast.png

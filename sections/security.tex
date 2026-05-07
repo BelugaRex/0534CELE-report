@@ -1,0 +1,41 @@
+\section{NoC Security and Trustworthiness}
+\label{sec:security}
+
+\subsection{Why Security Is Now a NoC Problem}
+
+As AI systems scale into heterogeneous and multi-chiplet platforms, the NoC becomes an attack surface as well as a transport fabric. Modern on-chip networks may carry proprietary model weights, embeddings, intermediate activations, user inputs, and memory traffic associated with secure execution. This makes confidentiality, integrity, availability, and supply-chain trust central interconnect concerns rather than purely software-level concerns \cite{charles2022survey,weerasena2024security}.
+
+\subsection{Threats in Heterogeneous AI Systems}
+
+AI traffic is especially exposed because it is structured and repetitive. Convolution, matrix multiplication, attention, and collective communication often produce highly predictable patterns in timing, link utilization, and buffer occupancy. That predictability makes traffic analysis and side-channel inference easier than in irregular general-purpose workloads. In heterogeneous AI systems, additional risks include congestion-based denial-of-service, malicious third-party IP blocks, and compromised chiplet routers or memory interfaces \cite{pasricha2022electronic,sarihi2021survey}. The same open standards that enable chiplet interoperability also widen the trust boundary if die authentication and secure boot mechanisms are weak.
+
+This is one of the clearest cases where the presentation adds AI-specific nuance to the broader literature. A generic NoC may already be vulnerable to snooping, congestion, or malicious routing state changes. An AI NoC, however, exposes structured dataflows that can reveal model architecture, layer behavior, or even user-dependent inputs through side channels. The network is therefore not only a path for attacks but also a source of information leakage.
+
+\begin{table}[!t]
+\caption{Representative NoC Security Risks in AI Systems}
+\label{tab:security}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\columnwidth}{p{1.7cm}Y p{1.5cm}}
+\toprule
+Threat & Impact in AI & Typical Defense \\
+\midrule
+Side-channel analysis & Can reveal model structure or input-dependent behavior from timing and congestion. & Traffic shaping, randomized routing. \\
+Congestion / DoS & Can trigger latency spikes and throughput collapse in shared inference. & QoS-aware routing, anomaly monitoring. \\
+Trojanized IP & Can corrupt routing state or leak traffic through third-party logic. & Authentication, secure boot, monitors. \\
+Untrusted chiplets & Expands the trust boundary across standardized D2D links. & D2D attestation, chiplet root-of-trust. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Workload-Aware Defenses}
+
+Recent designs suggest a shift from generic protection to workload-aware protection. Trusted execution support for NPUs, as seen in architectures such as TNPU and sNPU, moves secure enclaves closer to the accelerator itself instead of relying entirely on the host CPU \cite{lee2022tnpu,feng2024snpu}. GuardNN and Securator similarly show that protecting AI data paths requires balancing encryption, integrity verification, and latency sensitivity rather than simply inserting heavyweight cryptographic blocks everywhere \cite{hua2022guardnn,shrivastava2023securator}. The key insight is that AI chips cannot afford security mechanisms that destroy TOPS/W, so interconnect protection must be co-designed with predictable dataflow and traffic locality.
+
+The defense landscape can be organized into several complementary directions. \emph{Cryptographic protection}---including link-layer encryption, packet authentication codes, and integrity trees---provides strong confidentiality and integrity guarantees but adds latency and energy overhead that may be unacceptable on critical data paths. \emph{Access control and isolation} mechanisms partition the NoC into secure and non-secure regions at the router level, preventing unauthorized IP blocks from observing or interfering with sensitive traffic. \emph{Secure routing} techniques, such as randomized path selection and oblivious routing, reduce the predictability that side-channel attackers rely on, though they may reduce throughput. \emph{Runtime monitoring} deploys hardware sensors and machine-learning-based anomaly detectors throughout the network to identify congestion attacks, abnormal traffic patterns, or thermal side-channel activity in real time.
+
+For heterogeneous chiplet systems, an additional layer of trust management is required. Chiplet root-of-trust mechanisms establish a hardware-anchored chain of trust from die authentication at boot time through ongoing runtime attestation. Secure interposer monitors can observe D2D traffic for protocol violations without adding latency to the data path. However, these mechanisms must themselves be lightweight and verifiable, because a compromised security monitor becomes a single point of failure for the entire package.
+
+The presentation argues that this predictability is both a risk and an opportunity. Structured communication makes side-channel leakage easier, but it also enables lighter-weight protection mechanisms such as dataflow-aware obfuscation, selective isolation, and accelerator-local trusted execution. A further nuance is that AI workloads exhibit \emph{phase behavior}: training has different security requirements and traffic patterns than inference, and batch inference differs from interactive serving. This temporal structure opens the door to adaptive security policies that apply stronger protection only when and where it is needed, amortizing the overhead over the full execution. This trade-off is likely to define the next stage of secure AI interconnect design.

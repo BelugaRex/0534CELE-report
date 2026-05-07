@@ -1,0 +1,50 @@
+\section{Heterogeneous Integration and Chiplets}
+\label{sec:chiplet}
+
+\subsection{Why Heterogeneous Integration Matters}
+
+Heterogeneous integration changes the scope of NoC design. Instead of packing all logic onto one monolithic die, modern AI systems increasingly disaggregate compute, memory, and I/O into specialized chiplets that are assembled through advanced packaging such as 2.5D interposers or 3D stacking. This approach improves yield, lowers design cost, and allows each function to use an appropriate process node. More importantly for AI systems, it makes it possible to scale memory capacity and compute area beyond the practical limits of a single reticle \cite{yin2024review,ucie2024spec}.
+
+The group presentation makes an important conceptual point here: heterogeneous integration is not just a packaging trick. It is a design methodology that decomposes a complex system into smaller functional blocks and reconnects them through a hierarchy of networks. For AI chips, this is especially attractive because dense compute, large SRAM, HBM, and I/O do not scale equally well on the same die or process technology.
+
+\subsection{The NoC--NoP Boundary}
+
+The architectural consequence is a hierarchical communication boundary between fast intra-die NoCs and slower die-to-die links. Once traffic crosses that boundary, latency and bandwidth characteristics change significantly, and the package-level network---often called a Network-on-Package (NoP)---can become the dominant bottleneck. This is particularly important for AI workloads whose collective communication and partial-sum movement already place heavy pressure on the interconnect. If mapping decisions ignore die boundaries, communication cost can dominate execution time even when each individual chiplet is efficient \cite{shao2019simba,sharma2022swap}.
+
+This boundary is what makes chiplet NoCs fundamentally different from simply scaling a single mesh. Intra-die traffic is optimized for fine-grained communication among nearby resources, whereas inter-die traffic must tolerate higher latency, tighter energy budgets, and explicit coherence or protocol adaptation. As highlighted in the presentation, AI workloads therefore need dataflow-aware placement across chiplets so that costly cross-boundary transfers are minimized rather than treated as a scheduling afterthought.
+
+\subsection{Advanced Packaging and Standardization}
+
+Recent technology trends aim to narrow this gap. UCIe has become the most visible standardization effort for open die-to-die interoperability, while more advanced packaging options continue to shrink bump pitch and improve bandwidth density. The transition from 2.5D micro-bump integration toward 3D copper-to-copper hybrid bonding further increases the importance of routing across the vertical dimension, making X-Y-Z style interconnect considerations relevant to future chiplet AI systems. At the architecture level, this means that NoC design must now extend beyond on-die router layout to include D2D protocols, package topology, traffic locality, and software mapping policies.
+
+The presentation also emphasizes the broader system consequences of this trend. Cross-die coherency protocols and logic-to-logic 3D interfaces are trying to make multi-chiplet packages behave more like virtual monolithic dies from the perspective of software. Yet the physical reality remains hierarchical. This means that future AI compilers and runtime systems must become increasingly packaging-aware if they are to realize the theoretical benefits of advanced integration.
+
+From an AI system perspective, chiplet NoCs matter because they make scalability practical. They enable large accelerator fabrics, allow memory chiplets such as HBM stacks to sit close to compute, and support modular integration of CPU, accelerator, and I/O dies. At the same time, they expose a new design tension: the system should look unified to software, but the underlying communication substrate is increasingly heterogeneous. A successful chiplet NoC therefore requires co-design across packaging, architecture, and compiler mapping rather than simply extending a 2D mesh across more silicon.
+
+\subsection{Key Challenges and Recent Innovations}
+
+Table~\ref{tab:chiplet} summarizes the central technical challenges in chiplet-based AI NoCs and the most notable recent responses from industry and academia. The interoperability problem has been the most visible, and the emergence of UCIe as an open die-to-die standard represents a major step toward a multi-vendor chiplet ecosystem. However, standardization alone does not solve the bandwidth and latency disparity between intra-die and inter-die links. For large multi-chiplet AI systems, inter-chiplet communication---particularly collective traffic and data movement that repeatedly crosses die boundaries---can dominate total execution cycles \cite{shao2019simba,sharma2022swap}.
+
+Recent research has therefore focused on communication-aware design flows. Tools such as RapidChiplet enable early-stage modeling of heterogeneous multi-chiplet networks, while dataflow-aware synthesis frameworks like SWAP co-optimize placement and routing to reduce costly cross-boundary transfers. At the physical level, the transition from passive silicon interposers to active interposers with embedded NoC routers, combined with 3D hybrid bonding, is progressively shrinking the performance gap between on-die and cross-die communication. Nevertheless, deadlock freedom across independently designed chiplets remains an open problem because traditional turn-model or virtual-channel-based guarantees do not trivially compose across heterogeneous dies with different routing policies.
+
+\begin{table}[!t]
+\caption{Key Challenges and Innovations in Chiplet-Based AI NoCs}
+\label{tab:chiplet}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\columnwidth}{p{1.7cm}Y p{1.5cm}}
+\toprule
+Challenge & AI System Impact & Recent Solutions \\
+\midrule
+Interoperability & Vendor IP cannot interoperate easily without common D2D interfaces. & UCIe; CXL-over-UCIe bridging. \\
+Bandwidth gap & Cross-die traffic can dominate runtime in communication-heavy mappings. & Hierarchical routing, active interposers, 3D hybrid bonding. \\
+Deadlock & Independent chiplets can break end-to-end routing assumptions. & Global NoP protocols, modular turn models. \\
+Thermal stress & Boundary links raise package hot-spot density in 2.5D/3D systems. & Power-gated links, thermal-aware TSV placement. \\
+Workload mapping & Poor placement pushes too much traffic across die boundaries. & RapidChiplet; SWAP-style mapping. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Thermal and power considerations add another layer of complexity. Driving signals across chiplet boundaries, whether through silicon interposers, organic substrates, or 3D TSVs, consumes significantly more energy per bit than on-die communication. In stacked configurations, this energy becomes concentrated heat that must be managed through power-gated links and thermal-aware physical design. Finally, testability and yield management become more difficult because a single failed D2D link can compromise an entire multi-chiplet package, making known-good-die (KGD) strategies and post-assembly repair mechanisms essential for practical deployment.

@@ -1,0 +1,24 @@
+\section{NoC Fundamentals}
+\label{sec:fundamentals}
+
+\subsection{Architectural Role}
+
+A NoC is a packet-based on-chip communication architecture that connects processing elements, SRAM blocks, accelerators, and other IP blocks through routers and links instead of relying on a shared bus. This organization improves scalability because traffic can be localized, routed hop by hop, and sustained in parallel across multiple paths. Compared with shared-bus designs, point-to-point communication and distributed arbitration reduce the collapse in local performance that often appears as system size grows \cite{dally2001route,bjerregaard2006survey}. In other words, the NoC is attractive not simply because it connects many components, but because it keeps local communication efficient even when the system becomes large and highly parallel.
+
+\subsection{Components and Data Movement}
+
+The basic building blocks of a NoC are resources, network interfaces, routers, buffers, and links. Resources such as processing elements or memory blocks do not communicate directly with one another; they inject and receive traffic through routers that exchange packets across the network. Router microarchitecture therefore matters: buffering policy, crossbar design, virtual channels, and speculative pipelines all affect latency and throughput \cite{peh2001delay}. In AI chips, where thousands of data transfers may be in flight simultaneously, router efficiency strongly influences the practical utilization of compute arrays.
+
+The group presentation emphasizes a useful separation between \emph{resources} and \emph{switches}. Resources include processing elements, SRAMs, and IP cores that perform computation or store data. Switches, by contrast, provide the platform for packet exchange and play the role of routers inside the NoC. This distinction is important for AI systems because compute optimizations and communication optimizations often happen at different places: data reuse may be created by the accelerator mapping, while congestion or serialization may still emerge inside the network itself.
+
+\subsection{Topology and Control Policies}
+
+NoCs are attractive because they provide flexibility in topology and control policy. Common topologies include mesh, torus, binary-tree, and other hierarchical organizations, while routing may be deterministic, adaptive, centrally coordinated, or distributed. Flow control can be circuit-switched or packet-switched, depending on whether the design prefers predictable reservation or statistical multiplexing. The presentation also highlights this protocol-level freedom as a key reason NoCs can be tailored to power, performance, and area requirements rather than treated as a fixed backbone.
+
+For AI hardware, this flexibility is valuable because dataflow patterns vary across convolution, matrix multiplication, attention, and collective communication. However, each extra hop, queue, and arbitration point also adds latency, so NoCs must balance scalability with tight timing and energy constraints \cite{chen2016eyeriss,chen2019eyerissv2}. Thus, even the ``fundamentals'' of NoC design are already shaped by AI-specific performance targets.
+
+\subsection{Performance Metrics and Design Trade-offs}
+
+NoC performance is characterized by several interacting metrics: zero-load latency (the delay through an otherwise idle network), saturation throughput (the injection rate at which queuing delays grow unbounded), energy per bit (including both link and router dynamic and static energy), and area overhead. For AI accelerators, two additional metrics are particularly important. The first is \emph{multicast efficiency}, which measures how effectively the network can deliver a single source value to multiple destinations without redundant transmissions. The second is \emph{communication-to-computation ratio}, which captures the balance between data movement and arithmetic throughput for a given workload mapping.
+
+These metrics expose fundamental trade-offs. A topology with higher radix (more router ports) can reduce hop count and latency but increases router complexity and area. Virtual channels improve throughput by reducing head-of-line blocking but add buffer and scheduling overhead. Adaptive routing can avoid congestion hot-spots but may introduce out-of-order delivery that complicates the memory consistency model. For AI chips, where workloads are more predictable than in general-purpose systems, designers often choose simpler, more deterministic organizations and invest complexity instead in workload-specific optimizations such as multicast support and sparsity-aware compression. This engineering judgment---favoring workload efficiency over general-case flexibility---sets the tone for the AI-specific optimizations discussed next.

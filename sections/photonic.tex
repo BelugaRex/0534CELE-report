@@ -1,0 +1,37 @@
+\section{Emerging Technologies: Photonic NoC}
+\label{sec:photonic}
+
+\subsection{Why Photonic NoCs Are Attractive}
+
+Photonic NoCs are motivated by the scaling limits of electrical interconnects. As AI models grow larger and more distributed within a package, long-distance communication demands high bandwidth density and low energy per bit that conventional metal wiring struggles to deliver. Optical waveguides and wavelength-division multiplexing (WDM) offer a promising alternative by allowing multiple data streams to share the same physical channel through different wavelengths \cite{vantrease2008corona,pan2009firefly}.
+
+The fundamental advantage is physical. In electrical links, energy per bit grows with distance because repeaters, equalization, and termination all consume power. In an optical waveguide, once light is coupled into the channel, propagation loss is far less sensitive to distance. This makes photonic links especially attractive for the global communication paths that span an entire chip or package, where electrical alternatives would require many power-hungry repeater stages. Furthermore, WDM allows a single waveguide to carry tens of wavelengths simultaneously, each modulated at tens of gigabits per second, creating aggregate bandwidth densities that electrical links cannot match within practical power budgets.
+
+\subsection{Hybrid Electro-Photonic Organization}
+
+For AI accelerators, photonic links are particularly attractive for global traffic. Long-distance broadcasts, reductions, and chip-scale synchronization can benefit from the lower propagation delay and higher aggregate bandwidth of optical channels. However, the most practical near-term direction is not a fully optical chip. Instead, the presentation's emphasis on hybrid electro-photonic NoCs is well justified: optical links are best suited to long-distance, high-bandwidth communication, while electrical links remain preferable for short, local transfers where simple CMOS routing is still more efficient \cite{pasricha2022electronic,weerasena2024security}.
+
+This hybrid organization maps naturally onto the hierarchical communication patterns of AI workloads. Local communication within a compute cluster---such as partial-sum exchange between nearest-neighbor multiply-accumulate units---is dominated by short, frequent, latency-sensitive messages that are well served by electrical NoCs. Global communication---such as broadcast of filter weights to all tiles, all-reduce across the full accelerator, or chiplet-to-chiplet data movement---involves longer distances and higher aggregate bandwidth demand, making it a strong candidate for photonic paths. The key architectural question is where to place the electro-optical interfaces so that conversion overhead does not erase the benefits of optical transport.
+
+\begin{table}[!t]
+\caption{Hybrid Electro-Photonic Link Roles in AI Accelerators}
+\label{tab:photonic}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\columnwidth}{p{1.55cm}Y p{1.8cm}}
+\toprule
+Link Type & Best Role & Example Traffic \\
+\midrule
+Optical links & Long-distance global traffic with high bandwidth demand. & Weight broadcast, all-reduce, chiplet-to-chiplet tensors. \\
+Electrical links & Short local transfers among nearby components and routers. & Partial sums, local activations, control traffic. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Open Challenges}
+
+The remaining challenges are substantial. Photonic components are thermally sensitive: even small temperature variations shift resonator wavelengths and can detune WDM channels, requiring active thermal stabilization that consumes power and adds control complexity. Insertion loss accumulates at every bend, coupler, and waveguide crossing, limiting the practical number of optical hops before signal regeneration is needed. Crosstalk between adjacent wavelengths or waveguides can degrade signal integrity, especially in dense WDM systems. And perhaps most critically, integration with standard CMOS manufacturing remains expensive and complex because photonic devices require different material properties and process steps than logic transistors.
+
+These issues mean that photonic NoCs are best viewed as an emerging complement to electrical NoCs rather than an immediate replacement. Even so, they represent an important direction because they align closely with the communication profile of future large-scale AI systems: frequent global exchange, strict energy budgets, and growing pressure on package-level bandwidth. Recent demonstrations of silicon photonic interposers and micro-ring-based WDM links in research environments suggest that the technology is maturing, but the gap between laboratory demonstration and volume manufacturing remains wide \cite{pasricha2022electronic,weerasena2024security}.
